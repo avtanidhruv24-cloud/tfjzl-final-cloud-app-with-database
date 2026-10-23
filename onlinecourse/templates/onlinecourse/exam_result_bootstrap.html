@@ -36,19 +36,34 @@
 </nav>
 
 <div class="container-fluid">
+    <h2>{{ course.name }} assessment result</h2>
     {% if grade > 80 %}
     <div class="alert alert-success">
-       <!--HINT Display passed info -->
+       You passed with a score of {{ grade }}%.
     </div>
         {% else %}
         <div class="alert alert-danger">
-            <!--HINT Display failed info -->
+            You scored {{ grade }}%. You need more than 80% to pass.
         </div>
         <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
         {% endif %}
         <div class="card-columns-vertical mt-1">
         <h5 class="">Exam results</h5>
-            <!--HINT Display exam results-->
+            {% for result in results %}
+                <div class="card mb-2">
+                    <div class="card-header {% if result.is_correct %}text-success{% else %}text-danger{% endif %}">
+                        {{ forloop.counter }}. {{ result.question.question_text }} ({{ result.question.grade }} point{{ result.question.grade|pluralize }})
+                    </div>
+                    <div class="card-body">
+                        {% for choice in result.choices %}
+                            <div class="{% if choice.is_correct %}text-success{% elif choice in result.selected_choices %}text-danger{% endif %}">
+                                {% if choice in result.selected_choices %}&#10003;{% endif %} {{ choice.choice_text }}
+                                {% if choice.is_correct %}<strong>(correct)</strong>{% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
 </body>

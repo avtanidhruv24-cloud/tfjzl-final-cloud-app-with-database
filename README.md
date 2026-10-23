@@ -13,3 +13,20 @@ An `onlinecourse` app has already been provided in this repo upon which you will
 For your reference, we have prepared the ER diagram design for the new assesement feature.
 
 ![Onlinecourse ER Diagram](https://github.com/ibm-developer-skills-network/final-cloud-app-with-database/blob/master/static/media/course_images/onlinecourse_app_er.png)
+
+**Assessment feature**
+
+Learners enrolled in a course can answer its multiple-choice assessment and view a score with feedback for each question. Each submission is tied to the learner's course enrollment. The Django admin lets staff add questions to a course and choices to each question.
+
+To run the project locally on Windows with the Python version specified in `runtime.txt`:
+
+```powershell
+py -3.8 -m venv djangoenv
+.\djangoenv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver 8001
+```
+
+Open `/admin/` to add a course and assessment questions. Learners can enroll from the course list, open the course, and submit its assessment.

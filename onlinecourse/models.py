@@ -103,10 +103,16 @@ class Question(models.Model):
     def __str__(self):
         return self.question_text
 
+    def is_get_score(self, selected_ids):
+        """Return whether selected choices exactly match the correct answers."""
+        correct_ids = set(self.choice_set.filter(is_correct=True).values_list('id', flat=True))
+        selected_for_question = set(self.choice_set.filter(id__in=selected_ids).values_list('id', flat=True))
+        return bool(correct_ids) and selected_for_question == correct_ids
+
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=2000)
+    choice_text = models.CharField(max_length=100)
     is_correct = models.BooleanField(default=False)
 
     def __str__(self):
@@ -119,4 +125,4 @@ class Submission(models.Model):
     date_submitted = models.DateTimeField(default=now)
 
     def __str__(self):
-        return "{} - {}".format(self.enrollment.user.username, self.date_submitted)
+        return "Submission: {} by {} on {}".format(self.id, self.enrollment.user.username, self.date_submitted.strftime('%Y-%m-%d %H:%M:%S'))

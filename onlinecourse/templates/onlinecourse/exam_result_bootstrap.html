@@ -39,11 +39,11 @@
     <h2>{{ course.name }} assessment result</h2>
     {% if grade > 80 %}
     <div class="alert alert-success">
-       You passed with a score of {{ grade }}%.
+       <strong>Congratulations!</strong> You passed with {{ total_score }} out of {{ possible_score }} points ({{ grade }}%).
     </div>
         {% else %}
         <div class="alert alert-danger">
-            You scored {{ grade }}%. You need more than 80% to pass.
+            You scored {{ total_score }} out of {{ possible_score }} points ({{ grade }}%). You need more than 80% to pass.
         </div>
         <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
         {% endif %}

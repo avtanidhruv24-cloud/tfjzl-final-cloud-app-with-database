@@ -86,7 +86,7 @@ class CourseListView(generic.ListView):
 
 class CourseDetailView(generic.DetailView):
     model = Course
-    template_name = 'onlinecourse/course_detail_bootstrap.html'
+    template_name = 'onlinecourse/course_details_bootstrap.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -147,25 +147,32 @@ def show_exam_result(request, course_id, submission_id):
     )
     selected_ids = set(submission.choices.values_list('id', flat=True))
     results = []
-    total_grade = 0
-    earned_grade = 0
+    possible_score = 0
+    total_score = 0
     for question in Question.objects.filter(course=course).prefetch_related('choice_set'):
         choices = list(question.choice_set.all())
         correct_choices = [choice for choice in choices if choice.is_correct]
         selected_choices = [choice for choice in choices if choice.id in selected_ids]
-        is_correct = bool(correct_choices) and {c.id for c in selected_choices} == {c.id for c in correct_choices}
-        total_grade += question.grade
+        is_correct = question.is_get_score(selected_ids)
+        possible_score += question.grade
         if is_correct:
-            earned_grade += question.grade
+            total_score += question.grade
         results.append({
             'question': question,
             'choices': choices,
             'selected_choices': selected_choices,
             'is_correct': is_correct,
         })
-    grade = round(earned_grade * 100 / total_grade) if total_grade > 0 else 0
+    grade = round(total_score * 100 / possible_score) if possible_score > 0 else 0
     return render(request, 'onlinecourse/exam_result_bootstrap.html', {
-        'course': course, 'submission': submission, 'results': results, 'grade': grade,
+        'course': course,
+        'submission': submission,
+        'results': results,
+        'grade': grade,
+        'total_score': total_score,
+        'possible_score': possible_score,
+        'possible': possible_score,
+        'selected_ids': selected_ids,
     })
 
 
